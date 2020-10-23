@@ -1,29 +1,37 @@
 #include<iostream>
 #include<cmath>
+#include<vector>
 #include <fstream>
 #include<cstdlib>
 
 using ptr= double(double, double);
 double f(double X, double t);
-double RandK(ptr fun, double x, double t,double h);
+void RandK(ptr fun, std::vector<double> &s,double h);
 
 int main(int argc, char **argv){
 
     const double h{std::atof(argv[1])};
     int Nmax{std::atoi(argv[2])};
-    int ii=0;
-    double x_0=1.0;
-    double t_0=0.0;
+    int ii=1;
+    std::vector<double> info{0};
+    info.resize(6);
+    info[0]=18;//x
+    info[1]=0.0;//tiempo
 
     std::ofstream sol("RyK.txt");
     sol.precision(10);
-
     while (ii<=Nmax){
-           sol<<t_0<<"\t";
-           sol<<x_0<<"\n";
-           x_0=RandK(f, x_0,t_0 ,h);
-           t_0+=h;
-           ii++;
+        RandK(f,info,h);
+        //info[1]+=h;
+        if(ii%10==0){
+            sol<<info[1]<<"\t";
+            sol<<info[2]<<"\t";            
+            sol<<info[3]<<"\t";
+            sol<<info[4]<<"\t";
+            sol<<info[5]<<"\t";
+            sol<<info[0]<<"\n";
+        }
+        ++ii;   
     }
     sol.close();
 
@@ -31,18 +39,19 @@ int main(int argc, char **argv){
 }
 
 double f(double X, double t){
-
-return 1-t+4*X;
+return 4*X*std::log(75/X)/5;
 }
 
 
-double RandK(ptr fun, double x, double t,double h){
-
-    double K1=fun(x,t);
-    double K2=fun(x+h*K1/2,t+h/2);
-    double K3=fun(x+h*K2/2,t+h/2);
-    double K4=fun(x+h*K3,t+h);
-    
-    return x+(K1+2*K2+2*K3+K4)*h/6;
+void RandK(ptr fun, std::vector<double> &s ,double h){
+    double x =s[0];
+    double t =s[1];
+    s[2]=fun(x,t);//M_1
+    s[3]=fun(x+h*s[2]/2,t+h/2);//M_2
+    s[4]=fun(x+h*s[3]/2,t+h/2);//M_3
+    s[5]=fun(x+h*s[4],t+h);//M_4
+   
+    s[0] +=(s[2]+2*s[3]+2*s[4]+s[5])*h/6;
+    s[1] +=h;
 }
 

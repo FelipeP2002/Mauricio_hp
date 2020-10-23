@@ -14,15 +14,16 @@ int main(int argc, char **argv){
     const double h{std::atof(argv[1])};
     int Nmax{std::atoi(argv[2])};
     int ii=0;
-    double x_0=1.0;
+    double x_0=180;
     double t_0=0.0;
 
     std::ofstream sol("Euler.txt");
     sol.precision(10);
 
     while (ii<=Nmax){
+        if(ii%100==0){
            sol<<t_0<<"\t";
-           sol<<x_0<<"\n";
+           sol<<x_0<<"\n";}
            x_0=Euler_meth(f, x_0,t_0 ,h);
            t_0+=h;
            ii++;
@@ -32,13 +33,14 @@ int main(int argc, char **argv){
     std::ofstream sol_M("Euler_mejorado.txt");
     sol_M.precision(10);
 
-    x_0=1.0;
+    x_0=180;
     t_0=0.0;
-    ii=0.0;
+    ii=0;
 
     while (ii<=Nmax){
+        if(ii%100==0){
            sol_M<<t_0<<"\t";
-           sol_M<<x_0<<"\n";
+           sol_M<<x_0<<"\n";}
            x_0= MEGA_E_M(x_0,t_0 ,h);
            t_0+=h;
            ii++;
@@ -49,8 +51,8 @@ int main(int argc, char **argv){
 }
 
 double f(double X, double t){
-
-return 1-t+4*X;
+    double K=-0.01462445296579252;
+    return K*(X-24);
 }
 
 
